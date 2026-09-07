@@ -21,7 +21,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  # Un seul job, sans bloc `environment:` : les trois runs précédents ont
+  # échoué au moment de planifier le job `deploy` sur un `environment:
+  # github-pages` (échec instantané, aucun runner assigné, aucun log — le
+  # signe d'une résolution d'environnement qui ne se fait pas pour ce compte).
+  # `actions/deploy-pages` n'a pas besoin d'un `environment:` de job pour
+  # fonctionner ; ça sert seulement à afficher l'URL dans l'onglet
+  # Environments. On s'en passe.
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,19 +40,8 @@ jobs:
       - run: npm run build
         env:
           GH_PAGES: 'true'
-      # Active Pages (source « GitHub Actions ») au premier run si ce n'est pas
-      # déjà fait — sans ça, le job deploy échoue faute d'environnement Pages.
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v4
