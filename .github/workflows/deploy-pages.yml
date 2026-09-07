@@ -33,6 +33,9 @@ jobs:
       - run: npm run build
         env:
           GH_PAGES: 'true'
+      # Active Pages (source « GitHub Actions ») au premier run si ce n'est pas
+      # déjà fait — sans ça, le job deploy échoue faute d'environnement Pages.
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
