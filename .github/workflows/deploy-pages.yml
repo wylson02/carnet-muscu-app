@@ -21,15 +21,18 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Un seul job, sans bloc `environment:` : les trois runs précédents ont
-  # échoué au moment de planifier le job `deploy` sur un `environment:
-  # github-pages` (échec instantané, aucun runner assigné, aucun log — le
-  # signe d'une résolution d'environnement qui ne se fait pas pour ce compte).
-  # `actions/deploy-pages` n'a pas besoin d'un `environment:` de job pour
-  # fonctionner ; ça sert seulement à afficher l'URL dans l'onglet
-  # Environments. On s'en passe.
   build-and-deploy:
     runs-on: ubuntu-latest
+    # deploy-pages exige ce bloc — sans lui, l'API refuse le déploiement
+    # (HTTP 400 « Missing environment »). Si ce job échoue immédiatement,
+    # sans runner assigné ni logs, c'est que l'environnement « github-pages »
+    # (créé automatiquement par configure-pages ci-dessous) a une politique de
+    # branches restreinte : Settings → Environments → github-pages →
+    # Deployment branches → autorise cette branche, ou repasse en
+    # « No restriction ».
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -44,4 +47,5 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-      - uses: actions/deploy-pages@v4
+      - id: deployment
+        uses: actions/deploy-pages@v4
