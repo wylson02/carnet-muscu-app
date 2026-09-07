@@ -438,30 +438,19 @@ export function WorkoutScreen() {
         )}
       </div>
 
-      {/* ── Navigation entre blocs ── */}
+      {/* ── Navigation entre blocs ──
+          Avancer sans valider, c'est sauter l'exercice : rien n'est écrit, il ne
+          compte pas dans le volume. Pas besoin d'un bouton « Passer » en plus. */}
       <div className="mt-5 flex gap-2">
-        <Button
-          className="flex-1"
-          disabled={index === 0}
-          onClick={() => setBlockIndex(index - 1)}
-        >
+        <Button className="flex-1" disabled={index === 0} onClick={() => setBlockIndex(index - 1)}>
           ‹ Préc.
-        </Button>
-        <Button
-          variant="ghost"
-          className="flex-1"
-          onClick={() =>
-            index < blocks.length - 1 ? setBlockIndex(index + 1) : void onFinish()
-          }
-        >
-          {index < blocks.length - 1 ? 'Passer' : 'Terminer'}
         </Button>
         <Button
           className="flex-1"
           disabled={index >= blocks.length - 1}
           onClick={() => setBlockIndex(index + 1)}
         >
-          Suiv. ›
+          {blockDone ? 'Suiv. ›' : 'Sauter ›'}
         </Button>
       </div>
 
