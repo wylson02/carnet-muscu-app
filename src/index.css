@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Palette reprise du code couleur du classeur :
+    jaune = ce que tu saisis · bleu = calculé
+    vert  = record / dans la cible · rouge = régression / hors cible
+  Sombre par défaut. Le thème clair existe pour la consultation au bureau ;
+  en salle, c'est le sombre.
+*/
+:root {
+  --c-ground: 11 14 17;
+  --c-panel: 18 23 28;
+  --c-raised: 26 33 40;
+  --c-line: 40 50 59;
+  --c-line-soft: 30 38 46;
+  --c-ink: 233 238 242;
+  --c-ink-dim: 154 168 180;
+  --c-ink-faint: 99 114 127;
+  --c-saisie: 233 196 106;
+  --c-calcul: 111 179 210;
+  --c-record: 95 208 138;
+  --c-regress: 239 122 122;
+  color-scheme: dark;
+}
+
+:root.clair {
+  --c-ground: 248 249 250;
+  --c-panel: 255 255 255;
+  --c-raised: 240 243 245;
+  --c-line: 214 221 227;
+  --c-line-soft: 228 233 238;
+  --c-ink: 20 26 32;
+  --c-ink-dim: 88 101 113;
+  --c-ink-faint: 130 143 155;
+  --c-saisie: 150 111 12;
+  --c-calcul: 26 110 148;
+  --c-record: 20 128 71;
+  --c-regress: 190 48 48;
+  color-scheme: light;
+}
+
+@layer base {
+  html {
+    /* Pas de zoom accidentel sur un double-tap entre deux séries. */
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-ground text-ink font-sans antialiased;
+    /* Le rebond élastique iOS donne l'impression que l'app a bougé. */
+    overscroll-behavior-y: none;
+  }
+
+  /* Rien n'est sélectionnable au doigt sauf le texte qu'on veut copier. */
+  button {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-calcul ring-offset-2 ring-offset-ground;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+@layer components {
+  /* Marges de sécurité iPhone : encoche en haut, barre d'accueil en bas. */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .label-xs {
+    @apply font-mono text-[10px] uppercase tracking-[0.13em] text-ink-faint;
+  }
+
+  .card {
+    @apply rounded-xl border border-line-soft bg-panel;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
