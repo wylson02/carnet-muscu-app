@@ -2,7 +2,13 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// GitHub Pages sert le site sous /<repo>/, pas à la racine du domaine.
+// `GH_PAGES=true npm run build` produit ce build-là ; sinon (Vercel et tout
+// autre hébergeur qui sert depuis la racine), rien ne change.
+const base = process.env.GH_PAGES === 'true' ? '/carnet-muscu-app/' : '/'
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -20,8 +26,8 @@ export default defineConfig({
         description: "Carnet d'entraînement hors-ligne — Système Fluide",
         lang: 'fr',
         dir: 'ltr',
-        start_url: '/',
-        scope: '/',
+        start_url: base,
+        scope: base,
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#0B0E11',
